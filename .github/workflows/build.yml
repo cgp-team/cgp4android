@@ -54,13 +54,15 @@ jobs:
 
       - name: Build debug APK
         if: ${{ inputs.release != true }}
-        run: ./gradlew :app:assembleDebug --no-daemon
+        # runner 自带 SDK 设了 ANDROID_SDK_ROOT，会与 ANDROID_HOME 冲突，先 unset
+        run: unset ANDROID_SDK_ROOT && ./gradlew :app:assembleDebug --no-daemon
 
       - name: Build release APK
         if: ${{ inputs.release == true }}
         env:
           BUSPOST_SIGNING_PROPS: ${{ secrets.BUSPOST_SIGNING_PROPS }}
-        run: ./gradlew :app:assembleRelease --no-daemon
+        # runner 自带 SDK 设了 ANDROID_SDK_ROOT，会与 ANDROID_HOME 冲突，先 unset
+        run: unset ANDROID_SDK_ROOT && ./gradlew :app:assembleRelease --no-daemon
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
